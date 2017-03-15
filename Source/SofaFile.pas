@@ -10,6 +10,8 @@ type
     X, Y, Z: Double;
   end;
 
+  TArrayOfDouble = array of Double;
+
   TSofaFile = class(TInterfacedPersistent, IStreamPersist)
   private
     FNumberOfMeasurements: Integer;
@@ -23,7 +25,7 @@ type
     FListenerUp: TVector3;
     FListenerView: TVector3;
     FSampleRate: array of Double;
-    FImpulseResponses: array of array of array of Double;
+    FImpulseResponses: array of array of TArrayOfDouble;
     FDelay: array of Double;
     FDateModified: string;
     FHistory: string;
@@ -49,6 +51,9 @@ type
     function GetSourcePositions(Index: Integer): TVector3;
     function GetSampleRate(Index: Integer): Double;
     function GetDelay(Index: Integer): Double;
+    function GetDelayCount: Integer;
+    function GetSampleRateCount: Integer;
+    function GetImpulseResponse(MeasurementIndex, ReceiverIndex: Integer): TArrayOfDouble;
   public
     procedure AfterConstruction; override;
 
@@ -86,8 +91,11 @@ type
     property EmitterPositions[Index: Integer]: TVector3 read GetEmitterPositions;
     property ListenerUp: TVector3 read FListenerUp;
     property ListenerView: TVector3 read FListenerView;
+    property ImpulseResponse[MeasurementIndex, ReceiverIndex: Integer]: TArrayOfDouble read GetImpulseResponse;
     property SampleRate[Index: Integer]: Double read GetSampleRate;
+    property SampleRateCount: Integer read GetSampleRateCount;
     property Delay[Index: Integer]: Double read GetDelay;
+    property DelayCount: Integer read GetDelayCount;
   end;
 
 implementation
@@ -112,12 +120,23 @@ begin
   Result := FDelay[Index];
 end;
 
+function TSofaFile.GetDelayCount: Integer;
+begin
+  Result := Length(FDelay);
+end;
+
 function TSofaFile.GetEmitterPositions(Index: Integer): TVector3;
 begin
   if (Index < 0) or (Index >= Length(FEmitterPositions)) then
     raise Exception.CreateFmt('Index out of bounds (%d)', [Index]);
 
   Result := FEmitterPositions[Index];
+end;
+
+function TSofaFile.GetImpulseResponse(MeasurementIndex,
+  ReceiverIndex: Integer): TArrayOfDouble;
+begin
+  Result := FImpulseResponses[MeasurementIndex, ReceiverIndex];
 end;
 
 function TSofaFile.GetListenerPositions(Index: Integer): TVector3;
@@ -142,6 +161,11 @@ begin
     raise Exception.CreateFmt('Index out of bounds (%d)', [Index]);
 
   Result := FSampleRate[Index];
+end;
+
+function TSofaFile.GetSampleRateCount: Integer;
+begin
+  Result := Length(FSampleRate);
 end;
 
 function TSofaFile.GetSourcePositions(Index: Integer): TVector3;
