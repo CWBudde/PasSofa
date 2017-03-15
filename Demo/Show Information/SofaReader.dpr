@@ -7,8 +7,8 @@ program SofaReader;
 uses
   SysUtils,
   StrUtils,
-  SofaFile in '..\Source\SofaFile.pas',
-  HdfFile in '..\HdfFile\Source\HdfFile.pas';
+  SofaFile in '..\..\Source\SofaFile.pas',
+  HdfFile in '..\..\HdfFile\Source\HdfFile.pas';
 
 procedure PrintFileInformation(SofaFile: TSofaFile);
 begin
