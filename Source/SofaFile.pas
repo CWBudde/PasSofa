@@ -25,6 +25,23 @@ type
     FSampleRate: array of Double;
     FImpulseResponses: array of array of array of Double;
     FDelay: array of Double;
+    FDateModified: string;
+    FHistory: string;
+    FComment: string;
+    FLicense: string;
+    FAPIVersion: string;
+    FAPIName: string;
+    FOrigin: string;
+    FTitle: string;
+    FDateCreated: string;
+    FReferences: string;
+    FDataType: string;
+    FOrganization: string;
+    FRoomType: string;
+    FApplicationVersion: string;
+    FApplicationName: string;
+    FAuthorContact: string;
+    procedure ReadAttributes(DataObject: THdfDataObject);
     procedure ReadDataObject(DataObject: THdfDataObject);
     function GetEmitterPositions(Index: Integer): TVector3;
     function GetListenerPositions(Index: Integer): TVector3;
@@ -41,10 +58,28 @@ type
     procedure LoadFromFile(Filename: TFileName);
     procedure SaveToFile(Filename: TFileName);
 
+    property DataType: string read FDataType;
+    property RoomType: string read FRoomType;
+    property Title: string read FTitle;
+    property DateCreated: string read FDateCreated;
+    property DateModified: string read FDateModified;
+    property APIName: string read FAPIName;
+    property APIVersion: string read FAPIVersion;
+    property AuthorContact: string read FAuthorContact;
+    property Organization: string read FOrganization;
+    property License: string read FLicense;
+    property ApplicationName: string read FApplicationName;
+    property ApplicationVersion: string read FApplicationVersion;
+    property Comment: string read FComment;
+    property History: string read FHistory;
+    property References: string read FReferences;
+    property Origin: string read FOrigin;
+
     property NumberOfMeasurements: Integer read FNumberOfMeasurements;
     property NumberOfReceivers: Integer read FNumberOfReceivers;
     property NumberOfEmitters: Integer read FNumberOfEmitters;
     property NumberOfDataSamples: Integer read FNumberOfDataSamples;
+
     property ListenerPositions[Index: Integer]: TVector3 read GetListenerPositions;
     property ReceiverPositions[Index: Integer]: TVector3 read GetReceiverPositions;
     property SourcePositions[Index: Integer]: TVector3 read GetSourcePositions;
@@ -140,8 +175,11 @@ begin
     HdfFile.LoadFromStream(Stream);
     if HdfFile.GetAttribute('Conventions') <> 'SOFA' then
       raise Exception.Create('File does not contain the SOFA convention');
+
     for Index := 0 to HdfFile.DataObject.DataObjectCount - 1 do
       ReadDataObject(HdfFile.DataObject.DataObject[Index]);
+
+    ReadAttributes(HdfFile.DataObject);
   finally
     HdfFile.Free;
   end;
@@ -303,6 +341,47 @@ begin
     SetLength(FDelay, ItemCount);
     for Index := 0 to ItemCount - 1 do
       DataObject.Data.Read(FDelay[Index], 8);
+  end;
+end;
+
+procedure TSofaFile.ReadAttributes(DataObject: THdfDataObject);
+var
+  Index: Integer;
+begin
+  for Index := 0 to DataObject.AttributeListCount - 1 do
+  begin
+    if DataObject.AttributeListItem[Index].Name = 'DateModified' then
+      FDateModified := string(DataObject.AttributeListItem[Index].ValueAsString);
+    if DataObject.AttributeListItem[Index].Name = 'History' then
+      FHistory := string(DataObject.AttributeListItem[Index].ValueAsString);
+    if DataObject.AttributeListItem[Index].Name = 'Comment' then
+      FComment := string(DataObject.AttributeListItem[Index].ValueAsString);
+    if DataObject.AttributeListItem[Index].Name = 'License' then
+      FLicense := string(DataObject.AttributeListItem[Index].ValueAsString);
+    if DataObject.AttributeListItem[Index].Name = 'FAPIVersion: tring;' then
+      FAPIVersion := string(DataObject.AttributeListItem[Index].ValueAsString);
+    if DataObject.AttributeListItem[Index].Name = 'APIName' then
+      FAPIName := string(DataObject.AttributeListItem[Index].ValueAsString);
+    if DataObject.AttributeListItem[Index].Name = 'Origin' then
+      FOrigin := string(DataObject.AttributeListItem[Index].ValueAsString);
+    if DataObject.AttributeListItem[Index].Name = 'Title' then
+      FTitle := string(DataObject.AttributeListItem[Index].ValueAsString);
+    if DataObject.AttributeListItem[Index].Name = 'DateCreated' then
+      FDateCreated := string(DataObject.AttributeListItem[Index].ValueAsString);
+    if DataObject.AttributeListItem[Index].Name = 'References' then
+      FReferences := string(DataObject.AttributeListItem[Index].ValueAsString);
+    if DataObject.AttributeListItem[Index].Name = 'DataType' then
+      FDataType := string(DataObject.AttributeListItem[Index].ValueAsString);
+    if DataObject.AttributeListItem[Index].Name = 'Organization' then
+      FOrganization := string(DataObject.AttributeListItem[Index].ValueAsString);
+    if DataObject.AttributeListItem[Index].Name = 'RoomType' then
+      FRoomType := string(DataObject.AttributeListItem[Index].ValueAsString);
+    if DataObject.AttributeListItem[Index].Name = 'ApplicationVersion' then
+      FApplicationVersion := string(DataObject.AttributeListItem[Index].ValueAsString);
+    if DataObject.AttributeListItem[Index].Name = 'ApplicationName' then
+      FApplicationName := string(DataObject.AttributeListItem[Index].ValueAsString);
+    if DataObject.AttributeListItem[Index].Name = 'AuthorContact' then
+      FAuthorContact := string(DataObject.AttributeListItem[Index].ValueAsString);
   end;
 end;
 
