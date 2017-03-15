@@ -1,3 +1,3 @@
 [submodule "Submodule"]
-	path = Submodule
+	path = HdfFile
 	url = https://github.com/CWBudde/PasHdf

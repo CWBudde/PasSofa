@@ -12,7 +12,12 @@ uses
 
 procedure PrintFileInformation(SofaFile: TSofaFile);
 begin
-  WriteLn('');
+  WriteLn('Number of Measurements: ' + IntToStr(SofaFile.NumberOfMeasurements));
+  WriteLn('Number of Receivers: ' + IntToStr(SofaFile.NumberOfReceivers));
+  WriteLn('Number of Emitters: ' + IntToStr(SofaFile.NumberOfEmitters));
+  WriteLn('Number of DataSamples: ' + IntToStr(SofaFile.NumberOfDataSamples));
+  WriteLn('SampleRate: ' + FloatToStr(SofaFile.SampleRate[0]));
+  WriteLn('Delay: ' + FloatToStr(SofaFile.Delay[0]));
 end;
 
 procedure ReadSofaFile(FileName: TFileName);
@@ -55,13 +60,13 @@ begin
       ReadSofaFile(ParamStr(1))
     else
       ReadSofaFiles;
-
-    {$IFDEF DEBUG}
-    ReadLn;
-    {$ENDIF}
   except
     on E: Exception do
       Writeln(E.ClassName, ': ', E.Message);
   end;
+
+  {$IFDEF DEBUG}
+  ReadLn;
+  {$ENDIF}
 end.
 
